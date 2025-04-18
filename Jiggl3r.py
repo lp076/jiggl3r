@@ -32,8 +32,8 @@ def read_config():
     config = {
         'activity_timeout': 120,    # Time before mouse starts to jiggle, Default 120 Seconds.
         'random_jiggle': False,      # Use random intervals between mouse jiggles, Default is false.
-        'random_jiggle_maximum_time': 0,
-        'random_jiggle_minimum_time': 0 
+        'random_jiggle_maximum_time': 120,
+        'random_jiggle_minimum_time': 15 
     }
     
     try:
