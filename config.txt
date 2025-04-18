@@ -1,0 +1,4 @@
+activity_timeout=5
+random_jiggle=1
+random_jiggle_maximum_time=0
+random_jiggle_minimum_time=0
