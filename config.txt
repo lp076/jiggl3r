@@ -1,4 +1,11 @@
-activity_timeout=                       #Time to wait before first jiggle, 120 by default
-random_jiggle=                          #Use random intervals between jiggles, 1 for Enabled, 0 for disabled, Disabled by default.
-random_jiggle_maximum_time=             #If using random intervals, the maximum time in seconds to wait between jiggles. default is 120
-random_jiggle_minimum_time=             #if using random intervals, the minimum time in seconds to wait between jiggles. Default is 15
+#Time to wait before first jiggle, 120 by default
+activity_timeout=20
+
+#Use random intervals between jiggles, 1 for Enabled, 0 for disabled, Disabled by default.
+random_jiggle=
+
+#If using random intervals, the maximum time in seconds to wait between jiggles. default is 120
+random_jiggle_maximum_time=    
+
+#if using random intervals, the minimum time in seconds to wait between jiggles. Default is 15
+random_jiggle_minimum_time=             

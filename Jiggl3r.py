@@ -1,17 +1,14 @@
-import pyautogui
+
 import time
 import os
 import datetime
 import sys
 import subprocess
-
-from pynput.mouse import Listener as MouseListener
-from pynput.keyboard import Listener as KeyboardListener
 from random import randint
 
 
 
-# check that all packages are installed
+# check that all packages are installed, if missing dependencies, install them.
 dependencies = ['pyautogui','pynput']
 for package in dependencies:
     if package in sys.modules:
@@ -21,6 +18,11 @@ for package in dependencies:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
         globals()[package] = __import__(package)
         print(f"{package} has been installed.")
+
+
+import pyautogui
+from pynput.mouse import Listener as MouseListener
+from pynput.keyboard import Listener as KeyboardListener
 
 # Global variable to track user activity
 last_active_time = time.time()
@@ -41,15 +43,17 @@ def read_config():
             print("Configuration file found! Reading config...")
             for line in file:
                 line.strip()
-
                 if not line or '=' not in line:
                     continue
 
                 # Get Activity_timeout value
                 if line.startswith('activity_timeout'):
-                    config['activity_timeout'] = int(line.split('=')[1].strip())
-                    print(f"Activity Timeout found: {config['activity_timeout']} Seconds")
-                    continue
+                    try:
+                        config['activity_timeout'] = int(line.split('=')[1].strip())
+                        print(f"Activity Timeout found: {config['activity_timeout']} Seconds")
+                        continue
+                    except ValueError:
+                        print(f"Error: Invalid value in config.txt for activity_timeout: {line}")
 
                 # Get random_jiggle value from config.txt, 1 for True, 0 for False. Also set random_jiggle parameters.
                 if line.startswith('random_jiggle'):
@@ -83,8 +87,6 @@ def read_config():
 
                     else:
                         print(f"No Random Jiggle parameters set, using defaults...")
-                        continue
-
 
                 # Print the configuration
                 print("Starting Jiggler with the following configuration:")
@@ -131,13 +133,12 @@ def monitor_activity(config):
     global last_active_time
     
     activity_timeout = config['activity_timeout']
-    random_jiggle_isEnabled = config['random_jiggle']
+    random_jiggle = config['random_jiggle']
     random_jiggle_maxtime = config['random_jiggle_maximum_time']
     random_jiggle_mintime = config['random_jiggle_minimum_time']
 
     next_jiggle_time = activity_timeout
 
-    print("\n")
     print("============================================================================")
     print(f'Jiggler started at {datetime.datetime.now()}')
     print("============================================================================")
@@ -146,17 +147,19 @@ def monitor_activity(config):
         # After waiting, check if the user has been inactive for the configured timeout
         current_time = time.time()
 
-        if random_jiggle_isEnabled:
+        if random_jiggle:
             if current_time - last_active_time > next_jiggle_time:
                 jiggle_cursor()
                 next_jiggle_time = randint(random_jiggle_mintime, random_jiggle_maxtime)
-                print(f"Next jiggle {next_jiggle_time} seconds after inactivity...")
+                print(f"Next jiggle {next_jiggle_time + 5}  seconds after inactivity...")
                 time.sleep(next_jiggle_time)   # Sleep for the random interval before checking activity again
                 
 
         elif current_time - last_active_time > activity_timeout:
             jiggle_cursor() 
             time.sleep(next_jiggle_time)
+        
+        time.sleep(5) #Wait 5 seconds before re-evaluating so computer doesnt blow up
 
 if __name__ == "__main__":
     config = read_config()
