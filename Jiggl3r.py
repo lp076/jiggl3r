@@ -54,45 +54,46 @@ def read_config():
                         continue
                     except ValueError:
                         print(f"Error: Invalid value in config.txt for activity_timeout: {line}")
+                        continue
 
                 # Get random_jiggle value from config.txt, 1 for True, 0 for False. Also set random_jiggle parameters.
                 if line.startswith('random_jiggle'):
                     field = line.split('=')
 
-
                     if field[0] == 'random_jiggle':
                         try:
                             config['random_jiggle'] = bool(int(field[1].strip()))
                         except ValueError:
-                            print(f"Error: Invalid value in config.txt for random_jiggle: {line}")
+                            print(f"\nError: Invalid value in config.txt for random_jiggle: {line}Using default value {config['random_jiggle']}") 
+                        continue
 
 
-                    if field[0] == 'random_jiggle_maximum_time':
+                    elif field[0] == 'random_jiggle_maximum_time':
                         try:
                             config['random_jiggle_maximum_time'] = int(field[1].strip())
                         except ValueError:
-                            print(f"Error: Invalid value in config.txt for random_jiggle_maximum_time: {line}")
+                            print(f"\nError: Invalid value in config.txt for random_jiggle_maximum_time: {line}Using default value {config['random_jiggle_maximum_time']}")
+                        continue
 
 
-                    if field[0] == 'random_jiggle_minimum_time':
+                    elif field[0] == 'random_jiggle_minimum_time':
                         try:
                             config['random_jiggle_minimum_time'] = int(field[1].strip())
                         except ValueError:
-                            print(f"Error: Invalid value in config.txt for random_jiggle_maximum_time: {line}")
+                            print(f"\nError: Invalid value in config.txt for random_jiggle_maximum_time: {line}Using default value {config['random_jiggle_minimum_time']}")
+                        continue
                     
+            if config['random_jiggle']:
+                print(f"Random intervals between jiggles is Enabled!\nMin/Max time between Jiggles is {config['random_jiggle_minimum_time']}s/{config['random_jiggle_maximum_time']}s")
 
-                    if config['random_jiggle']:
-                        print(f"Random intervals between jiggles is Enabled!\nMin/Max time between Jiggles is {config['random_jiggle_minimum_time']}s/{config['random_jiggle_maximum_time']}s")
-
-
-                    else:
-                        print(f"No Random Jiggle parameters set, using defaults...")
+            else:
+                print(f"No Random Jiggle parameters set, using defaults...")
 
                 # Print the configuration
                 print("Starting Jiggler with the following configuration:")
                 for param in config:
                     print("\t" + param + ":" + str(config[param]))
-                return config
+            return config
                 
 
     except FileNotFoundError: #Use Default values specified above if no config is found.
@@ -166,3 +167,4 @@ if __name__ == "__main__":
     with MouseListener(on_move=on_move, on_click=on_click, on_scroll=on_scroll) as mouse_listener:
         with KeyboardListener(on_press=on_press) as keyboard_listener:
             monitor_activity(config)
+            
