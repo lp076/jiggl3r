@@ -23,13 +23,7 @@ from pynput.mouse import Controller
 screen_width, screen_height = pyautogui.size()
 center = (screen_width // 2, screen_height // 2)
 mouse = Controller()
-
-print("Center: ", center)
-
-#mouse controller for if cursor wanders to edge of screen
-mouse = Controller()
-
-# Move the mouse to the center
+print("Primary monitor center: ", center)
 
 
 def read_config():
@@ -167,7 +161,7 @@ def monitor_activity(config):
             jiggle_cursor() 
             time.sleep(next_jiggle_time)
         
-        time.sleep(5) #Wait 5 seconds before re-evaluating so computer doesnt blow up
+        time.sleep(next_jiggle_time) #Wait before re-evaluating so computer doesnt blow up
 
 if __name__ == "__main__":
     config = read_config()
