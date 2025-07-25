@@ -2,32 +2,34 @@
 import time
 import os
 import datetime
-import sys
-import subprocess
 from random import randint
 
-
-
-# check that all packages are installed, if missing dependencies, install them.
-dependencies = ['pyautogui','pynput']
-for package in dependencies:
-    if package in sys.modules:
-        print(f"{package} is already loaded.")
-    else:
-        print(f"{package} not found. Installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-        globals()[package] = __import__(package)
-        print(f"{package} has been installed.")
 
 
 import pyautogui
 from pynput.mouse import Listener as MouseListener
 from pynput.keyboard import Listener as KeyboardListener
+from pynput.mouse import Controller
 
-# Global variable to track user activity
+# Global variable to track last user activity
 last_active_time = time.time()
 
-# Interval in seconds (2 minutes = 120 seconds)
+# Get the primary monitor size
+import pyautogui
+from pynput.mouse import Controller
+
+
+# Find center of main monitor in case we need to re-align later.
+screen_width, screen_height = pyautogui.size()
+center = (screen_width // 2, screen_height // 2)
+mouse = Controller()
+
+print("Center: ", center)
+
+#mouse controller for if cursor wanders to edge of screen
+mouse = Controller()
+
+# Move the mouse to the center
 
 
 def read_config():
@@ -93,7 +95,7 @@ def read_config():
                 print("Starting Jiggler with the following configuration:")
                 for param in config:
                     print("\t" + param + ":" + str(config[param]))
-            return config
+            return config 
                 
 
     except FileNotFoundError: #Use Default values specified above if no config is found.
@@ -104,27 +106,27 @@ def read_config():
         return config
 
 def on_move(x, y):
-    """Function to update the last activity time when mouse moves."""
+    # Function to update the last activity time when mouse moves.
     global last_active_time
     last_active_time = time.time()
 
 def on_click(x, y, button, pressed):
-    """Function to update the last activity time when mouse clicks."""
+    # Function to update the last activity time when mouse clicks.
     global last_active_time
     last_active_time = time.time()
 
 def on_scroll(x, y, dx, dy):
-    """Function to update the last activity time when mouse scrolls."""
+    #Function to update the last activity time when mouse scrolls.
     global last_active_time
     last_active_time = time.time()
 
 def on_press(key):
-    """Function to update the last activity time when a key is pressed."""
+    #Function to update the last activity time when a key is pressed.
     global last_active_time
     last_active_time = time.time()
 
 def jiggle_cursor():
-    """Function to jiggle the mouse slightly."""
+    #Function to jiggle the mouse slightly.
     print("Jiggling Cursor...")
     pyautogui.move(10, 0)  # Move the mouse 10 pixels to the right
     pyautogui.move(-10, 0)  # Move the mouse 10 pixels back to the left
@@ -150,7 +152,11 @@ def monitor_activity(config):
 
         if random_jiggle:
             if current_time - last_active_time > next_jiggle_time:
-                jiggle_cursor()
+                try:
+                    jiggle_cursor()
+                except:
+                    print("Mouse moved too far to the right! Re-aligning to center...\n")
+                    mouse.position = center
                 next_jiggle_time = randint(random_jiggle_mintime, random_jiggle_maxtime)
                 print(f"Next jiggle {next_jiggle_time + 5}  seconds after inactivity...")
                 time.sleep(next_jiggle_time)   # Sleep for the random interval before checking activity again
@@ -167,4 +173,3 @@ if __name__ == "__main__":
     with MouseListener(on_move=on_move, on_click=on_click, on_scroll=on_scroll) as mouse_listener:
         with KeyboardListener(on_press=on_press) as keyboard_listener:
             monitor_activity(config)
-            
