@@ -157,6 +157,7 @@ def monitor_activity(config):
                 except:
                     print("Mouse moved too far to the right! Re-aligning to center...\n")
                     mouse.position = center
+                    jiggle_cursor()
                 next_jiggle_time = randint(random_jiggle_mintime, random_jiggle_maxtime)
                 print(f"Next jiggle {next_jiggle_time + 5}  seconds after inactivity...")
                 time.sleep(next_jiggle_time)   # Sleep for the random interval before checking activity again
